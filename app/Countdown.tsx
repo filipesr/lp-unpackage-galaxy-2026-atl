@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import styles from "./page.module.css";
 
-const TARGET_DATE = new Date("2026-02-26T16:00:00Z"); // 13h BRT = 16h UTC
+const TARGET_DATE = new Date("2026-02-25T16:00:00Z"); // 13h BRT = 16h UTC
 
 function getTimeLeft() {
   const diff = TARGET_DATE.getTime() - Date.now();
