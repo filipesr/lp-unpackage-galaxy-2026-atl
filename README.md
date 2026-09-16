@@ -1,34 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Galaxy Unpacked 2026 — AtlanticoShop
 
-## Getting Started
+Página de transmissão ao vivo do Samsung Galaxy Unpacked 2026 para a AtlanticoShop: player incorporado e contagem regressiva para o evento, sem dependências além do Next.js.
 
-First, run the development server:
+**Demo:** https://lp-unpackage-galaxy-2026-atl.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## O que é
+
+Uma página de campanha, feita e publicada no mesmo dia do evento. A AtlanticoShop vende eletrônicos; o Unpacked é quando a Samsung anuncia a linha do ano. A página existe para transformar esse interesse em tráfego próprio: quem quer assistir assiste ali, na página da loja, em vez de no YouTube.
+
+Escopo deliberadamente mínimo — título, player e contador. Três arquivos, nenhuma dependência além do React e do Next.
+
+## Detalhe que não é óbvio
+
+Contador em tempo real quebra hidratação: o servidor renderiza o HTML num instante e o navegador o recalcula em outro, e o React reclama da diferença. O componente resolve isso esperando a montagem antes de mostrar qualquer número:
+
+```tsx
+if (!mounted) {
+  return <div className={styles.countdown} style={{ minHeight: "4rem" }} />;
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+O `minHeight` no lugar de um retorno vazio é o ponto: reserva o espaço que o contador vai ocupar, então o conteúdo abaixo não pula quando os números aparecem. Sem isso, o layout dá um solavanco no primeiro frame.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Passada a hora do evento, o contador troca sozinho para *"O evento começou!"* — a página não precisa de manutenção no dia.
 
-## Learn More
+## Stack
 
-To learn more about Next.js, take a look at the following resources:
+| Camada | Tecnologia |
+| --- | --- |
+| Framework | Next.js (App Router) |
+| Estilo | CSS Modules |
+| Vídeo | YouTube incorporado |
+| Deploy | Vercel |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Sem Tailwind, sem biblioteca de componentes, sem banco. Para uma página de uso único, cada dependência a mais seria custo sem retorno.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Rodando localmente
 
-## Deploy on Vercel
+```bash
+pnpm install
+pnpm dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Não há variáveis de ambiente.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Reaproveitando para outro evento
+
+Três mudanças, todas em arquivo único:
+
+| O quê | Onde |
+| --- | --- |
+| Data e hora do evento | `TARGET_DATE`, em `app/Countdown.tsx` (em UTC) |
+| Vídeo da transmissão | `src` do `iframe`, em `app/page.tsx` |
+| Título e descrição | `metadata`, em `app/layout.tsx` |
